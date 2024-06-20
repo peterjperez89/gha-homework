@@ -17,5 +17,4 @@ resource "aws_subnet" "subnet20-4" {
   }
 }
 
-data "aws_availability_zones" "availability_zone" {}
-
+data "aws_availability_zones" "available" {}

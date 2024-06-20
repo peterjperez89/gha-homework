@@ -2,7 +2,7 @@
 
 resource "aws_elb" "elb20-4" {
   name               = var.elb_name
-  availability_zones = [us-west-1a, us-west-1c]
+  availability_zones = ["us-west-1a", "us-west-1c"]
   listener {
     instance_port     = 80
     instance_protocol = "HTTP"

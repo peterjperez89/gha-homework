@@ -1,7 +1,12 @@
 module "vpc" {
-  source       = "./modules/vpc"
-  vpc_cidr     = var.vpc_cidr
-  subnet_cidrs = var.subnet_cidrs
+  source = "./modules/vpc"
+
+  subnet_cidrs = [
+    "10.0.1.0/24",
+    "10.0.2.0/24",
+    "10.0.3.0/24",
+    # Add more CIDRs as needed
+  ]
 }
 
 module "elb" {
@@ -12,15 +17,15 @@ module "elb" {
 module "lt" {
   source  = "./modules/lt"
   lt_name = var.lt_name
-  ami_id = var.ami_id
+  ami_id  = var.ami_id
 }
 
 module "asg" {
-  source          = "./modules/asg"
-  asg_name            = var.asg_name
-  ltid = module.lt.id
-  elbid             = module.elb.id
-  subnet_ids      = module.vpc.subnet_ids
-  min_size        = var.min_size
-  max_size        = var.max_size
+  source     = "./modules/asg"
+  asg_name   = var.asg_name
+  ltid       = module.lt.lt_id
+  elbid      = module.elb.id
+  subnet_ids = module.vpc.subnet_ids
+  min_size   = var.min_size
+  max_size   = var.max_size
 }
