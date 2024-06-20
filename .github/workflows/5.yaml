@@ -1,0 +1,57 @@
+name: DockerBuild
+on:
+  push:
+    tags:
+      - '*' #when a new tag gets created, pipeline will trigger
+  workflow_dispatch: #manually run via gui button
+
+jobs:
+  dockerbuildandpush:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Clone Codebase
+      uses: actions/checkout@v2
+
+    - name: Setup Docker Build
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build nginx Image (incremental) 
+      run: |
+        docker build -t "${{ secrets.DOCKER_USERID }}/mynginx5:${{ github.ref_name }}" .
+      working-directory: 5/nginx
+
+    - name: Build nginx Image (latest)
+      run: |
+        docker build -t "${{ secrets.DOCKER_USERID }}/mynginx5:latest" .
+      working-directory: 5/nginx
+
+    - name: Build httpd Image (incremental) 
+      run: |
+        docker build -t "${{ secrets.DOCKER_USERID }}/myhttpd5:${{ github.ref_name }}" .
+      working-directory: 5/nginx
+
+    - name: Build httpd Image (latest)
+      run: |
+        docker build -t "${{ secrets.DOCKER_USERID }}/myhttpd5:latest" .
+      working-directory: 5/nginx
+
+    - name: Log in to Docker
+      run: |
+        echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERID }}" --password-stdin
+
+    - name: Push nginx Image (incremental)
+      run: docker push "${{ secrets.DOCKER_USERID }}/mynginx5:${{ github.ref_name }}"
+      working-directory: 5/nginx
+
+    - name: Push nginx Image (latest)
+      run: docker push "${{ secrets.DOCKER_USERID }}/mynginx5:latest"
+      working-directory: 5/nginx
+
+    - name: Push httpd Image (incremental)
+      run: docker push "${{ secrets.DOCKER_USERID }}/myhttpd5:${{ github.ref_name }}"
+      working-directory: 5/nginx
+
+    - name: Push httpd Image (latest)
+      run: docker push "${{ secrets.DOCKER_USERID }}/myhttpd5:latest"
+      working-directory: 5/nginx
