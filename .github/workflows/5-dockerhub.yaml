@@ -1,0 +1,44 @@
+name: Docker Build for Docker Hub
+on:
+  push:
+    tags:
+      - '*' #when a new tag gets created, pipeline will trigger
+  workflow_dispatch: #manually run via gui button
+
+jobs:
+  dockerbuildandpush:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Clone Codebase
+      uses: actions/checkout@v2
+
+    - name: Setup Docker Build
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERID }}" --password-stdin
+
+    - name: Build, tag and Push HTTP image [incremental tag]
+      run: |
+        docker build -f Dockerfile -t "${{ secrets.DOCKER_USERID }}/http:${{ github.ref_name }}" .
+        docker push "${{ secrets.DOCKER_USERID }}/http:${{ github.ref_name }}"
+      working-directory: 5/httpd 
+      
+    - name: Build, tag and push HTTP image [latest tag]
+      run: |
+        docker build -f Dockerfile -t "${{ secrets.DOCKER_USERID }}/http:latest" .
+        docker push "${{ secrets.DOCKER_USERID }}/http:latest"
+      working-directory: 5/httpd
+
+    - name: Build, tag and push Nginx image [incremental tag]
+      run: |
+        docker build -f Dockerfile -t "${{ secrets.DOCKER_USERID }}/nginx:${{ github.ref_name }}" .
+        docker push "${{ secrets.DOCKER_USERID }}/nginx:${{ github.ref_name }}"
+      working-directory: 5/nginx 
+
+    - name: Build, tag and push Nginx image [latest tag]
+      run: |
+        docker build -f Dockerfile -t "${{ secrets.DOCKER_USERID }}/nginx:latest" .
+        docker push "${{ secrets.DOCKER_USERID }}/nginx:latest"
+      working-directory: 5/nginx
