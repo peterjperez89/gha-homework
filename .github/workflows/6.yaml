@@ -32,7 +32,7 @@ jobs:
       working-directory: 6/kubernetes/httpd
 
     - name: Apply httpd loadbalancer Service
-      run: kubectl apply -f loadbalancer.yaml
+      run: kubectl apply -f httpd-loadbalancer-service.yaml
       working-directory: 6/kubernetes/httpd
 
     - name: Apply nginx Deployment
