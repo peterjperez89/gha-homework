@@ -24,9 +24,10 @@ jobs:
     - name: Update EKS kubeconfig
       run: aws eks update-kubeconfig --name tfcluster --region us-west-1
 
-    - name: Create namespace
-      run: kubectl create namespace web
-
+    - name: Create namespace if it doesn't exist
+      run: |
+        kubectl get namespace web || kubectl create namespace web
+        
     - name: Apply httpd Deployment
       run: kubectl apply -f httpd-deployment.yaml
       working-directory: 6/kubernetes/httpd
