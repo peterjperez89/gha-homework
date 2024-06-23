@@ -27,7 +27,7 @@ jobs:
     - name: Create namespace if it doesn't exist
       run: |
         kubectl get namespace web || kubectl create namespace web
-        
+
     - name: Apply httpd Deployment
       run: kubectl apply -f httpd-deployment.yaml
       working-directory: 6/kubernetes/httpd
@@ -37,7 +37,7 @@ jobs:
       working-directory: 6/kubernetes/httpd
 
     - name: Apply nginx Deployment
-      run: kubectl apply -f httpd-deployment.yaml
+      run: kubectl apply -f nginx-deployment.yaml
       working-directory: 6/kubernetes/nginx
 
     - name: Apply nginx loadbalancer Service
